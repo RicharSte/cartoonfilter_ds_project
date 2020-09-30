@@ -1,8 +1,7 @@
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from utilitis import main_keyboard, remembering_user_choose
 from handlers import (greet_user, cartoonify, cartoonise_using_cartoonfilter,
-                      cartoonize_using_neuro)
+                      cartoonize_using_neuro, main_keyboard, remembering_user_choose)
 from settings import BOT_TOKEN, PROXY
 
 logging.basicConfig(
