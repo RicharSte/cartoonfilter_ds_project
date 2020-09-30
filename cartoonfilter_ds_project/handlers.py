@@ -16,15 +16,12 @@ def main_keyboard():
         ['Neural network with Blue filter'],['Cartoon filter']
     ])
 
-
 def remembering_user_choose(update, context):
     text = update.message.text
     if text == 'Neural network with Blue filter':
         context.user_data['filter_type'] = 'Neural network with Blue filter'
-        print(context.user_data['filter_type'])
     elif text == 'Cartoon filter':
          context.user_data['filter_type'] = 'Cartoon filter'
-         print(context.user_data['filter_type'])
 
 
 #Приветствуем пользователя
@@ -40,6 +37,7 @@ def cartoonify(update, context):
     #получаем фото в самом хорошем качестве
     photo = context.bot.getFile(update.message.photo[-1].file_id)
     chat_id = update.effective_chat.id
+    # Сохраняем фото с названием photo.jpg в папку downloads
     # меняем фотку с помощью нейросетки
     if context.user_data['filter_type'] == 'Neural network with Blue filter':
        update.message.reply_text('Please, wait a second')
@@ -49,12 +47,26 @@ def cartoonify(update, context):
        context.bot.send_photo(chat_id=chat_id, photo=user_cartoonize_image)
     #   меняем фотку с помощью фильра, над которым сейчас работает наташа
     elif context.user_data['filter_type'] == 'Cartoon filter':
+        # Сохраняем фото с названием photo.jpg в папку downloads
+        os.makedirs("downloads", exist_ok=True)
+        file_name = os.path.join("downloads", "photo.jpg")
+        photo.download(file_name)
+        update.message.reply_text("The photo is saved")
         cartoonise_using_cartoonfilter()
         update.message.reply_text('It\'s working!22')
+        cartoonise_using_cartoonfilter(update, context, file_name)
+        
     #это пока не работает, пока не знаю почему
     else:
         update.message.reply_text("Please choose, what do you want to use to change your photo")
 
+#функция для фильтров
+def cartoonise_using_cartoonfilter(update, context, file_name):
+    update.message.reply_text("Processing the photo")
+    
+    # Сохраняем обработанное фото под именем cartoon_photo.jpg в папку downloads. 
+    # Используется полное имя
+    cartoon_file_name = os.path.abspath(os.path.join("downloads", "cartoon_photo.jpg"))
 
 def cartoonize_using_network(photo):
        #get url from image and convert it to bytes   
@@ -77,6 +89,3 @@ def cartoonize_using_network(photo):
        user_cartoonize_image = io.BytesIO(image_in_bytes_format)
        return user_cartoonize_image
 
-#функция для фильтров
-def cartoonise_using_cartoonfilter():
-    print(2)
