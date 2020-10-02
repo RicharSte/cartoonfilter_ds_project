@@ -3,6 +3,8 @@ import os
 from telegram.ext import Updater, CommandHandler, MessageHandler
 from telegram import ReplyKeyboardMarkup
 
+from cartoon_filter import cartoon_filter
+
 def main_keyboard():
     return ReplyKeyboardMarkup([
         ['Neural network'],['Cartoon filter']
@@ -31,14 +33,20 @@ def greet_user(update, context):
 def cartoonify(update, context):
     #получаем фото в самом хорошем качестве
     photo = context.bot.getFile(update.message.photo[-1].file_id)
+    # Сохраняем фото с названием photo.jpg в папку downloads
+    os.makedirs("downloads", exist_ok=True)
+    file_name = os.path.join("downloads", "photo.jpg")
+    photo.download(file_name)
+    update.message.reply_text("The photo is saved")
     # меняем фотку с помощью нейросетки
     if context.user_data['filter_type'] == 'Neural network':
        cartoonize_using_neuro()
        update.message.reply_text('It\'s working!')
     #меняем фотку с помощью фильра, над которым сейчас работает наташа 
     elif context.user_data['filter_type'] == 'Cartoon filter':
-        cartoonise_using_cartoonfilter()
-        update.message.reply_text('It\'s working!22')
+        update.message.reply_text('It\'s working!!!')
+        cartoonise_using_cartoonfilter(update, context, file_name)
+        
     #это пока не работает, пока не знаю почему
     else:
         print(33)
@@ -50,6 +58,20 @@ def cartoonize_using_neuro():
     print(1)
 
 #функция для фильтров
-def cartoonise_using_cartoonfilter():
-    print(2)
+def cartoonise_using_cartoonfilter(update, context, file_name):
+    update.message.reply_text("Processing the photo")
+    
+    # Сохраняем обработанное фото под именем cartoon_photo.jpg в папку downloads. 
+    # Используется полное имя
+    cartoon_file_name = os.path.abspath(os.path.join("downloads", "cartoon_photo.jpg"))
+
+    cartoon_filter(os.path.abspath(file_name), cartoon_file_name)
+    update.message.reply_text("Processed the photo")
+    # Вывод обработанного фото пользователю
+    chat_id = update.effective_chat.id
+    context.bot.send_photo(chat_id=chat_id, photo=open(cartoon_file_name, 'rb'))
+    
+
+
+    
 
