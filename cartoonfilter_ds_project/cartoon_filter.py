@@ -1,7 +1,7 @@
 import cv2
 
 
-def cartoon_filter(img_dir, save_file_name):
+def cartoon_filter(img_dir, save_img_dir):
     """
     Из фотографии создает мультяшное изображение и выводит его.
     На вход получает путь к исходному изображению.
@@ -37,16 +37,13 @@ def cartoon_filter(img_dir, save_file_name):
         numBilateralFilters = 7
         # Первый шаг
         # Нисходящее изображение с использованием Гауссовой пирамиды 
-        print('Шаг 1')
         img_color = josh_rgb
         for _ in range(numDownSamples):
             img_color = cv2.pyrDown(img_color)
         # Повторно применяем небольшой двусторонний фильтр 
-        print('Шаг 2')
         for _ in range(numBilateralFilters):
             img_color = cv2.bilateralFilter(img_color, 9, 9, 7)
         # Вверх по образцу изображения до исходного размера
-        print('Шаг 3')
         for _ in range(numDownSamples):
             img_color = cv2.pyrUp(img_color)
         # Комбинируем шаги шаги 2 и 3
@@ -55,16 +52,24 @@ def cartoon_filter(img_dir, save_file_name):
         img_blur = cv2.medianBlur(img_gray, 7)
         # Четвертый шаг
         # Обнаружение и усиление краев
-        print('Шаг 4')
         img_edge = cv2.adaptiveThreshold(img_blur, 255,
                                         cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 9, 2)
         # Пятый шаг
         # Объедините цветное изображение из шага 1 с краевой маской из шага 4.
-        print('Шаг 5')
         img_edge = cv2.cvtColor(img_edge, cv2.COLOR_GRAY2RGB)
-        return cv2.bitwise_and(img_color, img_edge)
-
+        print(len(img_edge))
+        try:
+            img_result = cv2.bitwise_and(img_color, img_edge)
+        except cv2.error:
+            return "0"
+        else:
+            return img_result
+        
+        
     josh_rgb, josh_hsv, josh_gray = img_read(img_dir)
     josh = cartoon_filter(cv2.cvtColor(josh_rgb, cv2.COLOR_RGB2BGR))
-    cv2.imwrite(save_file_name, josh)
-    print('Готова обработка и сохранка cartoon_filter')
+    if josh == "0":
+        return josh
+    else:
+        cv2.imwrite(save_img_dir, josh)
+        print('Готова обработка и сохранка cartoon_filter')

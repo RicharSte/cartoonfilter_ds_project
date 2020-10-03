@@ -44,7 +44,6 @@ def cartoonify(update, context):
        update.message.reply_text('It\'s working!')
     #меняем фотку с помощью фильра, над которым сейчас работает наташа 
     elif context.user_data['filter_type'] == 'Cartoon filter':
-        update.message.reply_text('It\'s working!!!')
         cartoonise_using_cartoonfilter(update, context, file_name)
         
     #это пока не работает, пока не знаю почему
@@ -65,11 +64,13 @@ def cartoonise_using_cartoonfilter(update, context, file_name):
     # Используется полное имя
     cartoon_file_name = os.path.abspath(os.path.join("downloads", "cartoon_photo.jpg"))
 
-    cartoon_filter(os.path.abspath(file_name), cartoon_file_name)
-    update.message.reply_text("Processed the photo")
-    # Вывод обработанного фото пользователю
-    chat_id = update.effective_chat.id
-    context.bot.send_photo(chat_id=chat_id, photo=open(cartoon_file_name, 'rb'))
+    # Если модуль cartoon_filter выдал ошибку, то отправляем пользователю сообщение.
+    if cartoon_filter(os.path.abspath(file_name), cartoon_file_name):
+        update.message.reply_text("I can't process this photo. Choose another one")
+    else:
+        # Вывод обработанного фото пользователю, если модуль отработал без ошибок.
+        chat_id = update.effective_chat.id
+        context.bot.send_photo(chat_id=chat_id, photo=open(cartoon_file_name, 'rb'))
     
 
 
