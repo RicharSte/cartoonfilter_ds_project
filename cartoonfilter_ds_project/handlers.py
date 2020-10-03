@@ -11,6 +11,8 @@ import cv2
 from PIL import Image
 import io
 
+from cartoon_filter import apply_cartoon_filter
+
 def main_keyboard():
     return ReplyKeyboardMarkup([
         ['Neural network with Blue filter'],['Cartoon filter']
@@ -52,9 +54,8 @@ def cartoonify(update, context):
         file_name = os.path.join("downloads", "photo.jpg")
         photo.download(file_name)
         update.message.reply_text("The photo is saved")
-        cartoonise_using_cartoonfilter()
-        update.message.reply_text('It\'s working!22')
         cartoonise_using_cartoonfilter(update, context, file_name)
+        
         
     #это пока не работает, пока не знаю почему
     else:
@@ -68,6 +69,16 @@ def cartoonise_using_cartoonfilter(update, context, file_name):
     # Используется полное имя
     cartoon_file_name = os.path.abspath(os.path.join("downloads", "cartoon_photo.jpg"))
 
+    # Если модуль apply_cartoon_filter выдал ошибку, то отправляем пользователю сообщение.
+    try:
+        apply_cartoon_filter(os.path.abspath(file_name), cartoon_file_name)
+    except TypeError:
+        update.message.reply_text("I can't process this photo. Choose another one")
+    else:
+        # Вывод обработанного фото пользователю, если модуль отработал без ошибок.
+        chat_id = update.effective_chat.id
+        context.bot.send_photo(chat_id=chat_id, photo=open(cartoon_file_name, 'rb'))
+    
 def cartoonize_using_network(photo):
        #get url from image and convert it to bytes   
        url = photo['file_path']
