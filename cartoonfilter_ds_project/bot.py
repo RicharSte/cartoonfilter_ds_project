@@ -1,7 +1,6 @@
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from handlers import (greet_user, cartoonify, cartoonise_using_cartoonfilter,
-                      cartoonize_using_neuro, main_keyboard, remembering_user_choose)
+from handlers import (greet_user, cartoonify,main_keyboard, remembering_user_choose)
 from settings import BOT_TOKEN, PROXY
 
 logging.basicConfig(
@@ -16,7 +15,7 @@ def main():
     
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler('start', greet_user))
-    dp.add_handler(MessageHandler(Filters.regex('^(Neural network)$'), remembering_user_choose))
+    dp.add_handler(MessageHandler(Filters.regex('^(Neural network with Blue filter)$'), remembering_user_choose))
     dp.add_handler(MessageHandler(Filters.regex('^(Cartoon filter)$'), remembering_user_choose))
     dp.add_handler(MessageHandler(Filters.photo, cartoonify))
     
