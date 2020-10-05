@@ -64,7 +64,6 @@ def cartoonify(update, context):
 #функция для фильтров
 def cartoonise_using_cartoonfilter(update, context, file_name):
     update.message.reply_text("Processing the photo")
-    
     # Сохраняем обработанное фото под именем cartoon_photo.jpg в папку downloads. 
     # Используется полное имя
     cartoon_file_name = os.path.abspath(os.path.join("downloads", "cartoon_photo.jpg"))
