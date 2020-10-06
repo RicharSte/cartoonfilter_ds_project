@@ -7,7 +7,7 @@ import guided_filter
 from tqdm import tqdm
 
 os.environ['TF_CCP_MIN_LOG_LEVEL'] = '2'
-MODEL_PATH = 'saved_models'
+MODEL_PATH = '..\saved_models'
 
 
 def resize_crop(image):
