@@ -3,7 +3,6 @@ import numpy as np
 import tensorflow.contrib.slim as slim
 
 
-
 def resblock(inputs, out_channel=32, name='resblock'):
     
     with tf.variable_scope(name):
@@ -15,8 +14,6 @@ def resblock(inputs, out_channel=32, name='resblock'):
                                activation_fn=None, scope='conv2')
         
         return x + inputs
-
-
 
 
 def unet_generator(inputs, channel=32, num_blocks=4, name='generator', reuse=tf.AUTO_REUSE):
@@ -55,8 +52,3 @@ def unet_generator(inputs, channel=32, num_blocks=4, name='generator', reuse=tf.
         x4 = slim.convolution2d(x4, 3, [7, 7], activation_fn=None)
         
         return x4
-
-if __name__ == '__main__':
-    
-
-    pass

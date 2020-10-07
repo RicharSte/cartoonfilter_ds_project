@@ -1,11 +1,9 @@
 import os
-#я не знаю что из этого нужно в этом модуле, а что нет, поэтому беру все
 from telegram.ext import Updater, CommandHandler, MessageHandler
 from telegram import ReplyKeyboardMarkup, utils
 import cartoonize
 import requests
 import shutil
-
 import numpy as np
 import cv2
 from PIL import Image
@@ -39,6 +37,7 @@ def cartoonify(update, context):
     #получаем фото в самом хорошем качестве
     photo = context.bot.getFile(update.message.photo[-1].file_id)
     chat_id = update.effective_chat.id
+    
     # Сохраняем фото с названием photo.jpg в папку downloads
     # меняем фотку с помощью нейросетки
     if context.user_data['filter_type'] == 'Neural network with Blue filter':
@@ -47,6 +46,7 @@ def cartoonify(update, context):
        #send the image
        update.message.reply_text('Here we go')
        context.bot.send_photo(chat_id=chat_id, photo=user_cartoonize_image)
+   
     #   меняем фотку с помощью фильра, над которым сейчас работает наташа
     elif context.user_data['filter_type'] == 'Cartoon filter':
         # Сохраняем фото с названием photo.jpg в папку downloads
@@ -55,16 +55,13 @@ def cartoonify(update, context):
         photo.download(file_name)
         update.message.reply_text("The photo is saved")
         cartoonise_using_cartoonfilter(update, context, file_name)
-        
-        
-    #это пока не работает, пока не знаю почему
+    
     else:
-        update.message.reply_text("Please choose, what do you want to use to change your photo")
+        print("Something wrong, i can feel it")
 
 #функция для фильтров
 def cartoonise_using_cartoonfilter(update, context, file_name):
     update.message.reply_text("Processing the photo")
-    
     # Сохраняем обработанное фото под именем cartoon_photo.jpg в папку downloads. 
     # Используется полное имя
     cartoon_file_name = os.path.abspath(os.path.join("downloads", "cartoon_photo.jpg"))

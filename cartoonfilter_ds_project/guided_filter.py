@@ -2,8 +2,6 @@ import tensorflow as tf
 import numpy as np
 
 
-
-
 def tf_box_filter(x, r):
     k_size = int(2*r+1)
     ch = x.get_shape().as_list()[-1]
@@ -61,6 +59,7 @@ def fast_guided_filter(lr_x, lr_y, hr_x, r=1, eps=1e-8):
     mean_b = tf.image.resize_images(b, hr_x_shape[1: 3])
 
     output = mean_A * hr_x + mean_b
+    
     
     return output
 
