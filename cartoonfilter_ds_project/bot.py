@@ -17,6 +17,7 @@ def main():
     dp.add_handler(CommandHandler('start', greet_user))
     dp.add_handler(MessageHandler(Filters.regex('^(Neural network with Blue filter)$'), remembering_user_choose))
     dp.add_handler(MessageHandler(Filters.regex('^(Cartoon filter)$'), remembering_user_choose))
+    dp.add_handler(MessageHandler(Filters.regex('^(Neural network without filters)$'), remembering_user_choose))
     dp.add_handler(MessageHandler(Filters.photo, cartoonify))
     
     mybot.start_polling()
