@@ -4,16 +4,9 @@ import cv2
 import io
 import numpy as np
 import os
-from telegram.ext import Updater, CommandHandler, MessageHandler
-from telegram import ReplyKeyboardMarkup, utils
-import cartoonize
 from PIL import Image
 import requests
 import shutil
-import numpy as np
-import cv2
-from PIL import Image
-import io
 from skimage import io as stikIO
 from telegram.ext import Updater, CommandHandler, MessageHandler
 from telegram import ReplyKeyboardMarkup, utils
