@@ -48,7 +48,6 @@ def cartoonify(update, context):
        #send the image
        update.message.reply_text('Here we go')
        context.bot.send_photo(chat_id=chat_id, photo=user_cartoonize_image)
-   
     #   меняем фотку с помощью фильра
     elif context.user_data['filter_type'] == 'Cartoon filter':
         update.message.reply_text('Please, wait a second')
