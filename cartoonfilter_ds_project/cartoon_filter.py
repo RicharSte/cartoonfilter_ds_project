@@ -1,7 +1,7 @@
 import cv2
 
 
-def apply_cartoon_filter(img_dir, save_img_dir):
+def apply_cartoon_filter(image):
     """
     Из фотографии создает мультяшное изображение и выводит его.
     На вход получает путь к исходному изображению.
@@ -14,7 +14,7 @@ def apply_cartoon_filter(img_dir, save_img_dir):
     5. Объедините цветное изображение из шага 1 с краевой маской из шага 4.
     """
     # Считывает данные из файла и переводит в различные форматы
-    img = cv2.imread(img_dir)
+    img = image
     
     josh_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     josh_hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
@@ -50,9 +50,5 @@ def apply_cartoon_filter(img_dir, save_img_dir):
         raise TypeError("Changed the photo")
     else:
         img_result = cv2.cvtColor(img_result, cv2.COLOR_RGB2BGR)
-        cv2.imwrite(save_img_dir, img_result)
-        return "Ok"
-        
-        
-    
+        return img_result
     
