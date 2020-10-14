@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, flash, redirect, url_for
+import os
 from werkzeug.utils import secure_filename
 
 from webapp.forms import FileForm
@@ -9,7 +10,7 @@ def create_app():
 
     def allowed_file(filename):
         # Проверяет есть ли  расширение файла в списке разрешенных расширений
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg'}
 
     @app.route('/', methods=['GET', 'POST'])
     def index():
@@ -17,18 +18,18 @@ def create_app():
         file_form = FileForm()
         if request.method == 'POST':
             # Проверка есть ли файл в запросе
-            if 'file' not in request.files:
+            if 'photo' not in request.files:
                 flash('Нет файла')
                 return redirect(request.url)
             # кладем файл из запроса в file
-            file = request.files['file']
+            file = request.files['photo']
             # Если пользователь не выбирает файл, 
             # браузер может отправить пустую часть без имени файла
             if file.filename == '':
                 flash("Файл не выбран")
                 return redirect(request.url)
             # Если расширение файла в списке разрешенных
-            if file and allowed_file(filename):
+            if file and allowed_file(file.filename):
                 # проверка безопасности имени файла
                 filename = secure_filename(file.filename)
                 # Сохранение файла

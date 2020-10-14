@@ -11,5 +11,4 @@ class FileForm(FlaskForm):
                       render_kw={"class": "form-group"})
     submit = SubmitField("Обработка", 
                              render_kw={"class": "btn btn-primary"})
-    # urrent_app.config['UPLOAD_FOLDER']
-    # FileAllowed(['jpg', 'png'], 'Только фотографии!'),
+
