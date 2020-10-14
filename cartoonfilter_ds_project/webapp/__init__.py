@@ -23,6 +23,7 @@ def create_app():
                 return redirect(url_for('photo_processing'))
             elif request.file_form['processing'] == 'neural_network': # обработка ИИ
                 flash('Обработка ИИ')
+            return redirect(url_for('index'))
         return render_template('index.html', title=title, form=file_form)
 
     
