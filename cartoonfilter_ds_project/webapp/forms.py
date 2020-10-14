@@ -9,8 +9,7 @@ class FileForm(FlaskForm):
     photo = FileField('картинка', validators=[FileRequired()],
                       
                       render_kw={"class": "form-group"})
-    cortoon_filter = SubmitField("Обработка фильтрами", render_kw={"class": "btn btn-primary"})
-    neural_network = SubmitField("Обработка искусственным интеллектом", 
-                                render_kw={"class": "btn btn-primary"})
+    submit = SubmitField("Обработка", 
+                             render_kw={"class": "btn btn-primary"})
     # urrent_app.config['UPLOAD_FOLDER']
     # FileAllowed(['jpg', 'png'], 'Только фотографии!'),
