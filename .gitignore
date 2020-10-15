@@ -128,3 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .vscode/
+
+cartoonfilter_ds_project/webapp/config.py
