@@ -35,14 +35,9 @@
                   {{ form.hidden_tag() }}
                   
                   {{ form.photo() }} <br>
-                  
-                  <input type="radio" name="processing" id="cortoon_filter" value="cortoon_filter">
-                  <label for="cortoon_filter">Обработка фильтрами</label><br>
 
-                  <input type="radio" name="processing" id="neural_network" value="neural_network">
-                  <label for="neural_network">Обработка искусственным интеллектом</label><br>
+                  {{ form.processing() }}
                   
-              
                   {{ form.submit() }}
               </form>
           </div>

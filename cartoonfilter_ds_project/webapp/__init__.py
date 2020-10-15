@@ -1,8 +1,10 @@
-from flask import Flask, request, render_template, flash, redirect, url_for
 import os
+
+from flask import Flask, request, render_template, flash, redirect, url_for
 from werkzeug.utils import secure_filename
 
 from webapp.forms import FileForm
+
 
 def create_app():
     app = Flask(__name__)
@@ -21,7 +23,6 @@ def create_app():
             if 'photo' not in request.files:
                 flash('Нет файла')
                 return redirect(request.url)
-            # кладем файл из запроса в file
             file = request.files['photo']
             # Если пользователь не выбирает файл, 
             # браузер может отправить пустую часть без имени файла
@@ -38,16 +39,14 @@ def create_app():
         if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
             flash('Ок')
 
-            if request.file_form['processing'] == 'cortoon_filter': # обработка фильтрами
+            if file_form.processing.data == 'cartoon_filter': # обработка фильтрами
                 flash('Обработка фильтрами')
                 return redirect(url_for('photo_processing'))
-            elif request.file_form['processing'] == 'neural_network': # обработка ИИ
+            elif file_form.processing.data == 'neural_network': # обработка ИИ
                 flash('Обработка ИИ')
             return redirect(url_for('photo_processing'))
         return render_template('index.html', title=title, form=file_form)
-
     
-
 
     @app.route('/photo')
     def photo_processing():
