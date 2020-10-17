@@ -1,17 +1,12 @@
-from cartoonize import cartoonize_photo
-from cartoon_filter import apply_cartoon_filter
-import cv2
-import io
-import numpy as np
-import os
-from PIL import Image
 import requests
-import shutil
 from skimage import io as stikIO
 from telegram.ext import Updater, CommandHandler, MessageHandler
 from telegram import ReplyKeyboardMarkup, utils
 import urllib.request as ur
 
+from cartoonize_using_network_Blue import cartoonize_using_network_Blue as nb
+from cartoonise_using_cartoonfilter import cartoonise_using_cartoonfilter as cf
+from cartoonize_using_network_without_filters import cartoonize_using_network_without_filters as wf
 
 def main_keyboard():
     return ReplyKeyboardMarkup([
@@ -44,79 +39,33 @@ def cartoonify(update, context):
     # меняем фотку с помощью нейросетки
     if context.user_data['filter_type'] == 'Neural network with Blue filter':
        update.message.reply_text('Please, wait a second')
-       user_cartoonize_image = cartoonize_using_network_Blue(photo)
+       #get url from image and convert it to bytes   
+       url = photo['file_path']
+       request_image = requests.get(url)
+       request_image.raw.decode_content = True
+       user_image_in_bytes = request_image.content
+       user_cartoonize_image = nb(user_image_in_bytes)
        #send the image
        update.message.reply_text('Here we go')
        context.bot.send_photo(chat_id=chat_id, photo=user_cartoonize_image)
     #   меняем фотку с помощью фильра
     elif context.user_data['filter_type'] == 'Cartoon filter':
         update.message.reply_text('Please, wait a second')
-        user_cartoonize_image = cartoonise_using_cartoonfilter(photo)
+        #get url
+        url = photo['file_path']
+        image = stikIO.imread(url)
+        user_cartoonize_image = cf(image)
         #send the image
         update.message.reply_text('Here we go')
         context.bot.send_photo(chat_id=chat_id, photo=user_cartoonize_image)
     elif context.user_data['filter_type'] == 'Neural network without filters':
         update.message.reply_text('Please, wait a second')
-        user_cartoonize_image = cartoonize_using_network_without_filters(photo)
+        #get url
+        url = photo['file_path']
+        image = stikIO.imread(url)
+        user_cartoonize_image = wf(image)
         #send the image
         update.message.reply_text('Here we go')
         context.bot.send_photo(chat_id=chat_id, photo=user_cartoonize_image)
     else:
         print("Something wrong, i can feel it")
-
-#меняем изображения с помощью фильтров
-def cartoonise_using_cartoonfilter(photo):
-    #get url
-    url = photo['file_path']
-    #read bytes from url
-    image = stikIO.imread(url) 
-    cartoonize_image_in_nympy_array = apply_cartoon_filter(image)
-    # chande numpy array to image format
-    cartoonize_image_in_image_format = Image.fromarray(cartoonize_image_in_nympy_array)
-    # change image format to bytes
-    image_in_bytes_format = io.BytesIO()
-    cartoonize_image_in_image_format.save(image_in_bytes_format, format='JPEG')
-    image_in_bytes_format = image_in_bytes_format.getvalue()
-    # load bytes into ram, so bot can send it
-    user_cartoonize_image = io.BytesIO(image_in_bytes_format)
-    return user_cartoonize_image
-
-# меняем картинку с помощью нейро сети + синий фильтр
-def cartoonize_using_network_Blue(photo):
-    #get url from image and convert it to bytes   
-    url = photo['file_path']
-    request_image = requests.get(url)
-    request_image.raw.decode_content = True
-    user_image_in_bytes = request_image.content
-    # convert bytes to nampy array
-    numpy_array_format = np.fromstring(user_image_in_bytes, np.uint8)
-    image_in_numpy_format = cv2.imdecode(numpy_array_format, cv2.IMREAD_COLOR)
-    # cartoonize te image
-    cartoonize_image_in_nympy_array = cartoonize_photo(image_in_numpy_format)
-    # chande numpy array to image format
-    cartoonize_image_in_image_format = Image.fromarray(cartoonize_image_in_nympy_array)
-    # change image format to bytes
-    image_in_bytes_format = io.BytesIO()
-    cartoonize_image_in_image_format.save(image_in_bytes_format, format='JPEG')
-    image_in_bytes_format = image_in_bytes_format.getvalue()
-    # load bytes into ram, so bot can send it
-    user_cartoonize_image = io.BytesIO(image_in_bytes_format)
-    return user_cartoonize_image
-
-#меняем фото с помощю нейронки но без синего фильра   
-def cartoonize_using_network_without_filters(photo):
-    #get url
-    url = photo['file_path']
-    #read bytes from url
-    image = stikIO.imread(url)
-    cartoonize_image_in_nympy_array = cartoonize_photo(image)
-    # chande numpy array to image format
-    cartoonize_image_in_image_format = Image.fromarray(cartoonize_image_in_nympy_array)
-    # change image format to bytes
-    image_in_bytes_format = io.BytesIO()
-    cartoonize_image_in_image_format.save(image_in_bytes_format, format='JPEG')
-    image_in_bytes_format = image_in_bytes_format.getvalue()
-    # load bytes into ram, so bot can send it
-    user_cartoonize_image = io.BytesIO(image_in_bytes_format)
-    return user_cartoonize_image
-
