@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, request, render_template, flash, redirect, url_for
+from io import StringIO
 from werkzeug.utils import secure_filename
 
 from webapp.forms import FileForm
@@ -33,8 +34,11 @@ def create_app():
             if file and allowed_file(file.filename):
                 # проверка безопасности имени файла
                 filename = secure_filename(file.filename)
+                file_in_bytes = file.read()
+                return file_in_bytes
+                
                 # Сохранение файла
-                file.save(os.path.abspath(os.path.join("downloads", filename)))
+                #file.save(os.path.abspath(os.path.join("downloads", filename)))
 
         if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
             flash('Ок')
