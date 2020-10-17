@@ -49,9 +49,3 @@ def cartoonize_photo(photo, model_path=MODEL_PATH):
     output = np.clip(output, 0, 255).astype(np.uint8)
     
     return output
-
-def save_photo(image, path):
-    cv2.imwrite(path, image)
-    
-def load_photo(path):
-    return cv2.imread(path)
