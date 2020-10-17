@@ -1,2 +1,2 @@
-SECRET_KEY = 'VJv79U(&hkBiutyVNBvu9^$#^&*HVJfutyjhjdT7iyi86875'
+SECRET_KEY = ''
 ALLOWED_EXTENSIONS = {'jpg'}

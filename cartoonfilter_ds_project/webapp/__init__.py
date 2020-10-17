@@ -36,9 +36,6 @@ def create_app():
                 filename = secure_filename(file.filename)
                 file_in_bytes = file.read()
                 return file_in_bytes
-                
-                # Сохранение файла
-                #file.save(os.path.abspath(os.path.join("downloads", filename)))
 
         if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
             flash('Ок')
