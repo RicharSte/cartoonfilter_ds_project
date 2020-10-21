@@ -3,6 +3,7 @@ from PIL import Image
 from skimage import io as stikIO
 from werkzeug.utils import secure_filename 
 
+
 from cartoonise_using_cartoonfilter import cartoonise_using_cartoonfilter
 from cartoonize_using_network_without_filters import cartoonize_using_network_without_filters
 from webapp.forms import FileForm
@@ -34,6 +35,7 @@ def create_app():
             if file and allowed_file(file.filename):
                 # проверка безопасности имени файла
                 filename = secure_filename(file.filename)
+
 
         if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
             flash('Ок')
