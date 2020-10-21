@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 
 from cartoonise_using_cartoonfilter import cartoonise_using_cartoonfilter
 from cartoonize_using_network_without_filters import cartoonize_using_network_without_filters
-from webapp.forms import FileForm
+from webapp.forms import FileForm, LoginForm
 
 def create_app():
     app = Flask(__name__)
@@ -62,6 +62,12 @@ def create_app():
             return redirect(url_for('photo_processing'))
         return render_template('index.html', title=title, form=file_form)
     
+    @app.route('/login')
+    def login():
+        title = 'Аторизация'
+        login_form = LoginForm()
+        return render_template('login.html', page_title=title, form=login_form)
+               
 
     @app.route('/photo')
     def photo_processing():
