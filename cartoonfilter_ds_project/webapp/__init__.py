@@ -18,6 +18,7 @@ def create_app():
     def index():
         title = "Обработчик фотографий"
         file_form = FileForm()
+        photo1 = os.path.abspath(os.path.join('examples', 'photo1_cartoon.jpg'))
         if request.method == 'POST':
             # Проверка есть ли файл в запросе
             if 'photo' not in request.files:
@@ -46,7 +47,7 @@ def create_app():
             elif file_form.processing.data == 'neural_network': # обработка ИИ
                 flash('Обработка ИИ')
             return redirect(url_for('photo_processing'))
-        return render_template('index.html', title=title, form=file_form)
+        return render_template('index.html', title=title, form=file_form, photo1=photo1)
     
 
     @app.route('/photo')

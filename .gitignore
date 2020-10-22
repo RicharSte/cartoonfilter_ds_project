@@ -130,3 +130,4 @@ dmypy.json
 .vscode/
 
 cartoonfilter_ds_project/webapp/config.py
+cartoonfilter_ds_project/settings.py
