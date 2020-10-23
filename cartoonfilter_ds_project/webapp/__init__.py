@@ -50,10 +50,10 @@ def create_app():
                     photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
                     photo = Image.open(photo)
                 #скачиваем фото
-                    photo.save('downloads\photo.jpeg')          
+                    photo.save('webapp/static/images/downloads/photo.jpeg')          
                 except TypeError:
                     #АХТУНГ это наддо выводить на экран пользователю, если не возможно обработать фото
-                    print('это фото невозможно обработать, выберите другое')
+                    flash('это фото невозможно обработать, выберите другое')
                 return redirect(url_for('photo_processing'))
             
             elif file_form.processing.data == 'neural_network': # обработка ИИ
@@ -62,7 +62,7 @@ def create_app():
                 photo = cartoonize_using_network_without_filters(file_in_ndarray)
                 photo = Image.open(photo)
             #скачиваем фото
-                photo.save('downloads\photo.jpeg')
+                photo.save('webapp/static/images/downloads/photo.jpeg')
             return redirect(url_for('photo_processing'))
         return render_template('index.html', title=title, form=file_form)
     
