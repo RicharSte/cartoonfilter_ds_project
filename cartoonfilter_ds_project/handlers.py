@@ -4,9 +4,9 @@ from telegram.ext import Updater, CommandHandler, MessageHandler
 from telegram import ReplyKeyboardMarkup, utils
 import urllib.request as ur
 
-from cartoonize_using_network_Blue import cartoonize_using_network_Blue as nb
-from cartoonise_using_cartoonfilter import cartoonise_using_cartoonfilter as cf
-from cartoonize_using_network_without_filters import cartoonize_using_network_without_filters as wf
+from cartoonfilter_ds_project.cartoonize_using_network_Blue import cartoonize_using_network_Blue as nb
+from cartoonfilter_ds_project.cartoonise_using_cartoonfilter import cartoonise_using_cartoonfilter as cf
+from cartoonfilter_ds_project.cartoonize_using_network_without_filters import cartoonize_using_network_without_filters as wf
 
 def main_keyboard():
     return ReplyKeyboardMarkup([
