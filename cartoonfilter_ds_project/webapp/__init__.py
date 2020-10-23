@@ -1,8 +1,12 @@
 import os
 
 from flask import Flask, request, render_template, flash, redirect, url_for
+from PIL import Image
+from skimage import io as stikIO
 from werkzeug.utils import secure_filename
 
+from cartoonise_using_cartoonfilter import cartoonise_using_cartoonfilter
+from cartoonize_using_network_without_filters import cartoonize_using_network_without_filters
 from webapp.forms import FileForm
 
 
@@ -18,7 +22,7 @@ def create_app():
     def index():
         title = "Обработчик фотографий"
         file_form = FileForm()
-        photo1 = os.path.abspath(os.path.join('examples', 'photo1_cartoon.jpg'))
+
         if request.method == 'POST':
             # Проверка есть ли файл в запросе
             if 'photo' not in request.files:
@@ -34,18 +38,33 @@ def create_app():
             if file and allowed_file(file.filename):
                 # проверка безопасности имени файла
                 filename = secure_filename(file.filename)
-                # Сохранение файла
-                os.makedirs("webapp/static/images/downloads", exist_ok=True)
-                file.save(os.path.abspath(os.path.join("webapp/static/images/downloads", filename)))
 
         if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
+            flash('Ок')
+            #считываем картинку сразу конвентируя информацию в ndarray
+            file_in_ndarray = stikIO.imread(file)
+
             if file_form.processing.data == 'cartoon_filter': # обработка фильтрами
                 flash('Обработка фильтрами')
+                try:
+                    photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
+                    photo = Image.open(photo)
+                #скачиваем фото
+                    photo.save('downloads\photo.jpeg')          
+                except TypeError:
+                    #АХТУНГ это наддо выводить на экран пользователю, если не возможно обработать фото
+                    print('это фото невозможно обработать, выберите другое')
                 return redirect(url_for('photo_processing'))
+            
             elif file_form.processing.data == 'neural_network': # обработка ИИ
                 flash('Обработка ИИ')
+            #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
+                photo = cartoonize_using_network_without_filters(file_in_ndarray)
+                photo = Image.open(photo)
+            #скачиваем фото
+                photo.save('downloads\photo.jpeg')
             return redirect(url_for('photo_processing'))
-        return render_template('index.html', title=title, form=file_form, photo1=photo1)
+        return render_template('index.html', title=title, form=file_form)
     
 
     @app.route('/photo')
