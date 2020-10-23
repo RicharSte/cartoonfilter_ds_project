@@ -35,12 +35,10 @@ def create_app():
                 # проверка безопасности имени файла
                 filename = secure_filename(file.filename)
                 # Сохранение файла
-                os.makedirs("downloads", exist_ok=True)
-                file.save(os.path.abspath(os.path.join("downloads", filename)))
+                os.makedirs("webapp/static/images/downloads", exist_ok=True)
+                file.save(os.path.abspath(os.path.join("webapp/static/images/downloads", filename)))
 
         if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
-            flash('Ок')
-
             if file_form.processing.data == 'cartoon_filter': # обработка фильтрами
                 flash('Обработка фильтрами')
                 return redirect(url_for('photo_processing'))
