@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, flash, redirect, url_for 
+
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from PIL import Image
 from skimage import io as stikIO
@@ -21,7 +22,7 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(user_id)
-    
+
     def allowed_file(filename):
         # Проверяет есть ли  расширение файла в списке разрешенных расширений
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg'}
