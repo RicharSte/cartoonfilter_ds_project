@@ -6,4 +6,3 @@ PROXY = {
         'password': 'python'
     }
 }
-s
