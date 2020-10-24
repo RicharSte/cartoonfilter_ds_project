@@ -1,5 +1,4 @@
 from flask import Flask, request, render_template, flash, redirect, url_for 
-
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from PIL import Image
 from skimage import io as stikIO
