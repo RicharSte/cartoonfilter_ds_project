@@ -131,3 +131,5 @@ dmypy.json
 
 cartoonfilter_ds_project/webapp/config.py
 cartoonfilter_ds_project/settings.py
+.jpeg
+.db

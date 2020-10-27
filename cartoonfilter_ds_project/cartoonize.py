@@ -1,10 +1,12 @@
 import os
 import cv2
 import numpy as np
-import tensorflow as tf 
+import tensorflow.compat.v1 as tf 
 import network
 import guided_filter
 from tqdm import tqdm
+
+tf.disable_v2_behavior()
 
 os.environ['TF_CCP_MIN_LOG_LEVEL'] = '2'
 MODEL_PATH = '..\saved_models'
