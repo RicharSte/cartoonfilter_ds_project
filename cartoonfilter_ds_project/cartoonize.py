@@ -9,7 +9,7 @@ from tqdm import tqdm
 tf.disable_v2_behavior()
 
 os.environ['TF_CCP_MIN_LOG_LEVEL'] = '2'
-MODEL_PATH = '..\saved_models'
+MODEL_PATH = os.path.join('..', 'saved_models')
 
 
 def resize_crop(image):

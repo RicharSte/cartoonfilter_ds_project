@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from flask import Flask, request, render_template, flash, redirect, url_for 
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from PIL import Image
@@ -8,6 +10,8 @@ from cartoonise_using_cartoonfilter import cartoonise_using_cartoonfilter
 from cartoonize_using_network_without_filters import cartoonize_using_network_without_filters
 from webapp.forms import FileForm, LoginForm
 from webapp.model import db, User
+
+PATH_TO_DOWNLOADS = Path('downloads/photo.jpeg')
 
 def create_app():
     app = Flask(__name__)
@@ -57,7 +61,7 @@ def create_app():
                     photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
                     photo = Image.open(photo)
                 #скачиваем фото
-                    photo.save('downloads\photo.jpeg')          
+                    photo.save(PATH_TO_DOWNLOADS)          
                 except TypeError:
                     #АХТУНГ это наддо выводить на экран пользователю, если не возможно обработать фото
                     print('это фото невозможно обработать, выберите другое')
@@ -69,7 +73,7 @@ def create_app():
                 photo = cartoonize_using_network_without_filters(file_in_ndarray)
                 photo = Image.open(photo)
             #скачиваем фото
-                photo.save('downloads\photo.jpeg')
+                photo.save(PATH_TO_DOWNLOAD)         
             return redirect(url_for('photo_processing'))
         return render_template('index.html', title=title, form=file_form)
     
