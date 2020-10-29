@@ -16,6 +16,8 @@
           <p class="text-center">Авторизация</p>
       </h1>
       <div class="row">
+          <div class="col-4"> 
+          </div>
           <div class="col-4">
               {% with messages = get_flashed_messages() %}
                   {% if messages %}
@@ -26,7 +28,6 @@
                   </div>
                   {% endif %}
               {% endwith %}
-          #Нужно вывести это по центру страницы
               <form action='{{ url_for("process_login") }}' method='POST'>
                   {{ form.hidden_tag() }}
                   <div class="form-group">
@@ -37,6 +38,7 @@
                       {{ form.password.label() }}
                       {{ form.password()}}
                   <div>
+                    <br>
                   {{ form.submit() }}  
           </div>
         </div>
