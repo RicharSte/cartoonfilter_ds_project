@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 from flask import Flask, request, render_template, flash, redirect, url_for 
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
@@ -12,7 +11,10 @@ from cartoonize_using_network_without_filters import cartoonize_using_network_wi
 from webapp.forms import FileForm, LoginForm
 from webapp.model import db, User
 
-PATH_TO_DOWNLOADS = Path('webapp/static/images/downloads/photo.jpeg')
+PATH_TO_DOWNLOADS = os.path.join(
+os.path.abspath(os.path.dirname(__file__)), 
+'static', 'images', 'downloads', 'photo.jpeg'
+)
 
 def create_app():
     app = Flask(__name__)
@@ -79,9 +81,7 @@ def create_app():
                 photo = Image.open(photo)
             #скачиваем фото
 
-                photo.save(PATH_TO_DOWNLOAD)         
-  
-                photo.save('webapp/static/images/downloads/photo.jpeg')
+                photo.save(PATH_TO_DOWNLOADS)         
             return redirect(url_for('photo_processing'))
 
         name_photo_example = ['liuyifei4.jpg', 'mountain4.jpg', 'photo1_cartoon.jpg',
