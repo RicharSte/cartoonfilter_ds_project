@@ -129,5 +129,7 @@ dmypy.json
 .pyre/
 .vscode/
 
+cartoonfilter_ds_project/webapp/config.py
+cartoonfilter_ds_project/settings.py
 .jpeg
 .db
