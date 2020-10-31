@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from flask import Flask, request, render_template, flash, redirect, url_for 
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
@@ -11,6 +11,7 @@ from cartoonize_using_network_without_filters import cartoonize_using_network_wi
 from webapp.forms import FileForm, LoginForm
 from webapp.model import db, User
 
+PATH_TO_DOWNLOADS = Path('webapp/static/images/downloads/photo.jpeg')
 
 def create_app():
     app = Flask(__name__)
@@ -20,6 +21,7 @@ def create_app():
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'login' 
+    
     
     @login_manager.user_loader
     def load_user(user_id):
@@ -60,8 +62,9 @@ def create_app():
                 try:
                     photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
                     photo = Image.open(photo)
-                #скачиваем фото
-                    photo.save('webapp/static/images/downloads/photo.jpeg')          
+                #скачиваем фотo
+                    photo.save(PATH_TO_DOWNLOADS)          
+
                 except TypeError:
                     # Если невозможно обработать фото, то пользователь видит
                     flash('это фото невозможно обработать, выберите другое')
@@ -74,6 +77,9 @@ def create_app():
                 photo = cartoonize_using_network_without_filters(file_in_ndarray)
                 photo = Image.open(photo)
             #скачиваем фото
+
+                photo.save(PATH_TO_DOWNLOAD)         
+  
                 photo.save('webapp/static/images/downloads/photo.jpeg')
             return redirect(url_for('photo_processing'))
 
