@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, request, render_template, flash, redirect, url_for 
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from PIL import Image
@@ -8,6 +10,7 @@ from cartoonise_using_cartoonfilter import cartoonise_using_cartoonfilter
 from cartoonize_using_network_without_filters import cartoonize_using_network_without_filters
 from webapp.forms import FileForm, LoginForm
 from webapp.model import db, User
+
 
 def create_app():
     app = Flask(__name__)
@@ -25,11 +28,13 @@ def create_app():
     def allowed_file(filename):
         # Проверяет есть ли  расширение файла в списке разрешенных расширений
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg'}
+    
 
     @app.route('/', methods=['GET', 'POST'])
     def index():
         title = "Обработчик фотографий"
         file_form = FileForm()
+
         if request.method == 'POST':
             # Проверка есть ли файл в запросе
             if 'photo' not in request.files:
@@ -47,7 +52,6 @@ def create_app():
                 filename = secure_filename(file.filename)
 
         if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
-            flash('Ок')
             #считываем картинку сразу конвентируя информацию в ndarray
             file_in_ndarray = stikIO.imread(file)
 
@@ -57,10 +61,11 @@ def create_app():
                     photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
                     photo = Image.open(photo)
                 #скачиваем фото
-                    photo.save('downloads\photo.jpeg')          
+                    photo.save('webapp/static/images/downloads/photo.jpeg')          
                 except TypeError:
-                    #АХТУНГ это наддо выводить на экран пользователю, если не возможно обработать фото
-                    print('это фото невозможно обработать, выберите другое')
+                    # Если невозможно обработать фото, то пользователь видит
+                    flash('это фото невозможно обработать, выберите другое')
+                    return redirect(url_for('index'))
                 return redirect(url_for('photo_processing'))
             
             elif file_form.processing.data == 'neural_network': # обработка ИИ
@@ -69,10 +74,16 @@ def create_app():
                 photo = cartoonize_using_network_without_filters(file_in_ndarray)
                 photo = Image.open(photo)
             #скачиваем фото
-                photo.save('downloads\photo.jpeg')
+                photo.save('webapp/static/images/downloads/photo.jpeg')
             return redirect(url_for('photo_processing'))
-        return render_template('index.html', title=title, form=file_form)
+
+        name_photo_example = ['liuyifei4.jpg', 'mountain4.jpg', 'photo1_cartoon.jpg',
+                              'photo2_cartoon.jpg']
+        path_photo_example = [os.path.join('static', 'images', name) for name in name_photo_example]
+        return render_template('index.html', title=title, form=file_form, 
+                                path_photo_example=path_photo_example)
     
+
     @app.route('/login')
     def login():
         if current_user.is_authenticated:
@@ -80,7 +91,8 @@ def create_app():
         title = 'Аторизация'
         login_form = LoginForm()
         return render_template('login.html', page_title=title, form=login_form)
-     
+
+
     @app.route('/process-login', methods=['POST'])
     def process_login():
         form = LoginForm()
@@ -94,15 +106,19 @@ def create_app():
         flash('Username or password are not correct')
         return redirect(url_for('login'))        
 
+
     @app.route('/logout')
     def logout():
             logout_user()
             return redirect(url_for('index'))
     
+
     @app.route('/photo')
     def photo_processing():
         title = "Вот такое фото получилось"
-        return render_template('photo.html', title=title)
+        path_photo = os.path.join('static', 'images', 'downloads', 'photo.jpeg')
+        return render_template('photo.html', title=title, path_photo=path_photo)
+
 
 #идея в том чтобы для не зарегистрированных пользователей не была доступна возможность 
 #отбрабатывать фотки на сайте. Т.е. нужно дописать Главную страницу, которая будет показываться всем
