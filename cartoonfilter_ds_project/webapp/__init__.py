@@ -2,13 +2,14 @@ import os
 
 from flask import Flask, request, render_template, flash, redirect, url_for 
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
+from flask_migrate import Migrate
 from PIL import Image
 from skimage import io as stikIO
 from werkzeug.utils import secure_filename 
 
 from cartoonise_using_cartoonfilter import cartoonise_using_cartoonfilter
 from cartoonize_using_network_without_filters import cartoonize_using_network_without_filters
-from webapp.forms import FileForm, LoginForm
+from webapp.forms import FileForm, LoginForm, RegistrationForm
 from webapp.model import db, User
 
 
@@ -16,6 +17,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
     db.init_app(app)
+    migrate = Migrate(app, db)
     
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -60,7 +62,7 @@ def create_app():
                 try:
                     photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
                     photo = Image.open(photo)
-                #скачиваем фото
+                    #скачиваем фото
                     photo.save('webapp/static/images/downloads/photo.jpeg')          
                 except TypeError:
                     # Если невозможно обработать фото, то пользователь видит
@@ -70,10 +72,10 @@ def create_app():
             
             elif file_form.processing.data == 'neural_network': # обработка ИИ
                 flash('Обработка ИИ')
-            #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
+                #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
                 photo = cartoonize_using_network_without_filters(file_in_ndarray)
                 photo = Image.open(photo)
-            #скачиваем фото
+                #скачиваем фото
                 photo.save('webapp/static/images/downloads/photo.jpeg')
             return redirect(url_for('photo_processing'))
 
@@ -88,7 +90,7 @@ def create_app():
     def login():
         if current_user.is_authenticated:
             return redirect(url_for('index'))
-        title = 'Аторизация'
+        title = 'Авторизация'
         login_form = LoginForm()
         return render_template('login.html', page_title=title, form=login_form)
 
@@ -100,10 +102,10 @@ def create_app():
         if form.validate_on_submit():
             user = User.query.filter(User.username == form.username.data).first()
             if user and user.check_password(form.password.data):
-                login_user(user)
+                login_user(user, remember=form.remember_me.data)
                 return redirect(url_for('index'))
             
-        flash('Username or password are not correct')
+        flash('Имя пользователя или пароль неверны')
         return redirect(url_for('login'))        
 
 
@@ -118,6 +120,29 @@ def create_app():
         title = "Вот такое фото получилось"
         path_photo = os.path.join('static', 'images', 'downloads', 'photo.jpeg')
         return render_template('photo.html', title=title, path_photo=path_photo)
+    
+
+    @app.route('/register')
+    def register():
+        if current_user.is_authenticated:
+            return redirect(url_for('index'))
+        form = RegistrationForm()
+        title = 'Регистрация'
+        return render_template('registration.html', page_title=title, form=form)
+
+
+    @app.route('/process-reg', methods=['POST'])
+    def process_reg():
+        form = RegistrationForm()
+        if form.validate_on_submit():
+            news_user = User(username=form.username.data, email=form.email.data, role='user')
+            news_user.set_password(form.password.data)
+            db.session.add(news_user)
+            db.session.commit()
+            flash('Вы успешно зарегистрировались')
+            return redirect(url_for('login'))
+        flash('Пожалуйта исправьте ошибки в форме')
+        return redirect(url_for('register'))
 
 
 #идея в том чтобы для не зарегистрированных пользователей не была доступна возможность 
@@ -129,4 +154,7 @@ def create_app():
     
     
     return app
+
+
+    
 

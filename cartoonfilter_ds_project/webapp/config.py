@@ -1,9 +1,12 @@
+from datetime import timedelta
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-SECRET_KEY = ''
+SECRET_KEY = 'bctiuwgnyh7w5n6yh79rn97bm4c7r9'
 ALLOWED_EXTENSIONS = {'jpg'}
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, '..', 'webapp.db')
+
+REMEMBER_COOKIE_DURATION = timedelta(days=5)
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False

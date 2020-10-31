@@ -11,6 +11,26 @@
     <title>{{ title }}</title>
   </head>
   <body>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/">Главная страница</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        {% if current_user.is_authenticated %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('logout') }}">Выйти</a>
+        </li>
+        {% else %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('login') }}">Войти</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+    
     <div class="conteiner">
       <h1>
           <p class="text-center">Создай из фотографии карикатуру</p>
