@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from flask import Flask, request, render_template, flash, redirect, url_for 
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
@@ -12,6 +13,7 @@ from cartoonize_using_network_without_filters import cartoonize_using_network_wi
 from webapp.forms import FileForm, LoginForm, RegistrationForm
 from webapp.model import db, User
 
+PATH_TO_DOWNLOADS = Path('webapp/static/images/downloads/photo.jpeg')
 
 def create_app():
     app = Flask(__name__)
@@ -22,6 +24,7 @@ def create_app():
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'login' 
+    
     
     @login_manager.user_loader
     def load_user(user_id):
@@ -151,7 +154,6 @@ def create_app():
     @login_required
     def func():
         pass
-    
     
     return app
 
