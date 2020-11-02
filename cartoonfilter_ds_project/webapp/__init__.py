@@ -53,31 +53,31 @@ def create_app():
                 # проверка безопасности имени файла
                 filename = secure_filename(file.filename)
 
-        if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
-            #считываем картинку сразу конвентируя информацию в ndarray
-            file_in_ndarray = stikIO.imread(file)
+                if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
+                    #считываем картинку сразу конвентируя информацию в ndarray
+                    file_in_ndarray = stikIO.imread(file)
 
-            if file_form.processing.data == 'cartoon_filter': # обработка фильтрами
-                flash('Обработка фильтрами')
-                try:
-                    photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
-                    photo = Image.open(photo)
-                    #скачиваем фото
-                    photo.save('webapp/static/images/downloads/photo.jpeg')          
-                except TypeError:
-                    # Если невозможно обработать фото, то пользователь видит
-                    flash('это фото невозможно обработать, выберите другое')
-                    return redirect(url_for('index'))
-                return redirect(url_for('photo_processing'))
-            
-            elif file_form.processing.data == 'neural_network': # обработка ИИ
-                flash('Обработка ИИ')
-                #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
-                photo = cartoonize_using_network_without_filters(file_in_ndarray)
-                photo = Image.open(photo)
-                #скачиваем фото
-                photo.save('webapp/static/images/downloads/photo.jpeg')
-            return redirect(url_for('photo_processing'))
+                    if file_form.processing.data == 'cartoon_filter': # обработка фильтрами
+                        flash('Обработка фильтрами')
+                        try:
+                            photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
+                            photo = Image.open(photo)
+                            #скачиваем фото
+                            photo.save('webapp/static/images/downloads/photo.jpeg')          
+                        except TypeError:
+                            # Если невозможно обработать фото, то пользователь видит
+                            flash('Это фото обработать невозможно, выберите другое')
+                            return redirect(url_for('index'))
+                        return redirect(url_for('photo_processing'))
+                    
+                    elif file_form.processing.data == 'neural_network': # обработка ИИ
+                        flash('Обработка ИИ')
+                        #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
+                        photo = cartoonize_using_network_without_filters(file_in_ndarray)
+                        photo = Image.open(photo)
+                        #скачиваем фото
+                        photo.save('webapp/static/images/downloads/photo.jpeg')
+                    return redirect(url_for('photo_processing'))
 
         name_photo_example = ['liuyifei4.jpg', 'mountain4.jpg', 'photo1_cartoon.jpg',
                               'photo2_cartoon.jpg']
@@ -92,7 +92,7 @@ def create_app():
             return redirect(url_for('index'))
         title = 'Авторизация'
         login_form = LoginForm()
-        return render_template('login.html', page_title=title, form=login_form)
+        return render_template('login.html', title=title, form=login_form)
 
 
     @app.route('/process-login', methods=['POST'])
@@ -128,7 +128,7 @@ def create_app():
             return redirect(url_for('index'))
         form = RegistrationForm()
         title = 'Регистрация'
-        return render_template('registration.html', page_title=title, form=form)
+        return render_template('registration.html', title=title, form=form)
 
 
     @app.route('/process-reg', methods=['POST'])
