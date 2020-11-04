@@ -1,8 +1,8 @@
-BOT_TOKEN = ""
+BOT_TOKEN = " Write here your Bot token"
 PROXY = {
-    'proxy_url': 'socks5://t1.learn.python.ru:1080',
+    'proxy_url': ' Proxy url',
     'urllib3_proxy_kwargs': {
-        'username': 'learn', 
-        'password': 'python'
+        'username': 'Your username', 
+        'password': 'Proxy Password'
     }
 }

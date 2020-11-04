@@ -7,8 +7,8 @@ from PIL import Image
 from skimage import io as stikIO
 from werkzeug.utils import secure_filename 
 
-from cartoonise_using_cartoonfilter import cartoonise_using_cartoonfilter
-from cartoonize_using_network_without_filters import cartoonize_using_network_without_filters
+from filters import cartoonise_using_cartoonfilter
+from filters import cartoonize_using_network_without_filters
 from webapp.forms import FileForm, LoginForm
 from webapp.model import db, User
 
@@ -132,3 +132,5 @@ def create_app():
         title = "Вот такое фото получилось"
         path_photo = os.path.join('static', 'images', 'downloads', RANDOM_NAME)
         return render_template('photo.html', title=title, path_photo=path_photo)
+    
+    return app
