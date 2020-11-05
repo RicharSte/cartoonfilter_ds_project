@@ -3,9 +3,11 @@ from random import randint
 
 from flask import Flask, request, render_template, flash, redirect, url_for 
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
+from flask_migrate import Migrate
 from PIL import Image
 from skimage import io as stikIO
 from werkzeug.utils import secure_filename 
+
 
 from filters import cartoonise_using_cartoonfilter
 from filters import cartoonize_using_network_without_filters
@@ -21,6 +23,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
     db.init_app(app)
+    migrate = Migrate(app, db)
     
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -57,6 +60,7 @@ def create_app():
                 # проверка безопасности имени файла
                 filename = secure_filename(file.filename)
 
+                
         if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
             #считываем картинку сразу конвентируя информацию в ndarray
             file_in_ndarray = stikIO.imread(file)
@@ -90,7 +94,7 @@ def create_app():
             #сохраняем файл
                 photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
             return redirect(url_for('photo_processing'))
-
+          
         name_photo_example = ['liuyifei4.jpg', 'mountain4.jpg', 'photo1_cartoon.jpg',
                               'photo2_cartoon.jpg']
         path_photo_example = [os.path.join('static', 'images', name) for name in name_photo_example]
@@ -104,7 +108,7 @@ def create_app():
             return redirect(url_for('index'))
         title = 'Авторизация'
         login_form = LoginForm()
-        return render_template('login.html', page_title=title, form=login_form)
+        return render_template('login.html', title=title, form=login_form)
 
 
     @app.route('/process-login', methods=['POST'])
@@ -114,10 +118,10 @@ def create_app():
         if form.validate_on_submit():
             user = User.query.filter(User.username == form.username.data).first()
             if user and user.check_password(form.password.data):
-                login_user(user)
+                login_user(user, remember=form.remember_me.data)
                 return redirect(url_for('index'))
             
-        flash('Username or password are not correct')
+        flash('Имя пользователя или пароль неверны')
         return redirect(url_for('login'))        
 
 
@@ -132,5 +136,27 @@ def create_app():
         title = "Вот такое фото получилось"
         path_photo = os.path.join('static', 'images', 'downloads', RANDOM_NAME)
         return render_template('photo.html', title=title, path_photo=path_photo)
-    
+
+    @app.route('/register')
+    def register():
+        if current_user.is_authenticated:
+            return redirect(url_for('index'))
+        form = RegistrationForm()
+        title = 'Регистрация'
+        return render_template('registration.html', title=title, form=form)
+
+
+    @app.route('/process-reg', methods=['POST'])
+    def process_reg():
+        form = RegistrationForm()
+        if form.validate_on_submit():
+            news_user = User(username=form.username.data, email=form.email.data, role='user')
+            news_user.set_password(form.password.data)
+            db.session.add(news_user)
+            db.session.commit()
+            flash('Вы успешно зарегистрировались')
+            return redirect(url_for('login'))
+        flash('Пожалуйта исправьте ошибки в форме')
+        return redirect(url_for('register'))
+
     return app
