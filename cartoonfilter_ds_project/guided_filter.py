@@ -12,7 +12,6 @@ def tf_box_filter(x, r):
     return output
 
 
-
 def guided_filter(x, y, r, eps=1e-2):
     
     x_shape = tf.shape(x)
@@ -36,11 +35,8 @@ def guided_filter(x, y, r, eps=1e-2):
     return output
 
 
-
 def fast_guided_filter(lr_x, lr_y, hr_x, r=1, eps=1e-8):
-    
     #assert lr_x.shape.ndims == 4 and lr_y.shape.ndims == 4 and hr_x.shape.ndims == 4
-   
     lr_x_shape = tf.shape(lr_x)
     #lr_y_shape = tf.shape(lr_y)
     hr_x_shape = tf.shape(hr_x)
@@ -59,8 +55,7 @@ def fast_guided_filter(lr_x, lr_y, hr_x, r=1, eps=1e-8):
     mean_b = tf.image.resize_images(b, hr_x_shape[1: 3])
 
     output = mean_A * hr_x + mean_b
-    
-    
+
     return output
 
 

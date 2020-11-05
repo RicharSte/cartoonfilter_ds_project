@@ -8,9 +8,10 @@ from PIL import Image
 from skimage import io as stikIO
 from werkzeug.utils import secure_filename 
 
-from cartoonise_using_cartoonfilter import cartoonise_using_cartoonfilter
-from cartoonize_using_network_without_filters import cartoonize_using_network_without_filters
-from webapp.forms import FileForm, LoginForm, RegistrationForm
+
+from filters import cartoonise_using_cartoonfilter
+from filters import cartoonize_using_network_without_filters
+from webapp.forms import FileForm, LoginForm
 from webapp.model import db, User
 
 PATH_TO_DOWNLOADS = os.path.join(
@@ -75,6 +76,7 @@ def create_app():
                     RANDOM_NAME = random_name
                 #скачиваем фотo
                     photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
+                  
                 except TypeError:
                     # Если невозможно обработать фото, то пользователь видит
                     flash('это фото невозможно обработать, выберите другое')
@@ -92,6 +94,7 @@ def create_app():
             #сохраняем файл
                 photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
             return redirect(url_for('photo_processing'))
+          
         name_photo_example = ['liuyifei4.jpg', 'mountain4.jpg', 'photo1_cartoon.jpg',
                               'photo2_cartoon.jpg']
         path_photo_example = [os.path.join('static', 'images', name) for name in name_photo_example]
