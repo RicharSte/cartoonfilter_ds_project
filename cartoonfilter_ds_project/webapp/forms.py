@@ -25,8 +25,8 @@ class LoginForm(FlaskForm):
         default=True,
         render_kw={"class": "form-check-input"})
     submit = SubmitField('Отправить', render_kw={'class': "btn btn-primary"})
-
-
+    
+    
 class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', 
         validators=[DataRequired()], 

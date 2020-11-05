@@ -8,10 +8,9 @@ from PIL import Image
 from skimage import io as stikIO
 from werkzeug.utils import secure_filename 
 
-
 from filters import cartoonise_using_cartoonfilter
 from filters import cartoonize_using_network_without_filters
-from webapp.forms import FileForm, LoginForm
+from webapp.forms import FileForm, LoginForm, RegistrationForm
 from webapp.model import db, User
 
 PATH_TO_DOWNLOADS = os.path.join(
@@ -60,40 +59,40 @@ def create_app():
                 # проверка безопасности имени файла
                 filename = secure_filename(file.filename)
 
-                
-        if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
-            #считываем картинку сразу конвентируя информацию в ndarray
-            file_in_ndarray = stikIO.imread(file)
+                    
+                if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
+                #считываем картинку сразу конвентируя информацию в ndarray
+                    file_in_ndarray = stikIO.imread(file)
 
-            if file_form.processing.data == 'cartoon_filter': # обработка фильтрами
-                flash('Обработка фильтрами')
-                try:
-                    photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
-                    photo = Image.open(photo)
-                #даем случайное имя файлу, чтобы отправить его пользовате    
-                    random_name = str(randint(0, 10000))+'.jpeg'
-                    global RANDOM_NAME
-                    RANDOM_NAME = random_name
-                #скачиваем фотo
-                    photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
-                  
-                except TypeError:
-                    # Если невозможно обработать фото, то пользователь видит
-                    flash('это фото невозможно обработать, выберите другое')
-                    return redirect(url_for('index'))
-                return redirect(url_for('photo_processing'))
-            
-            elif file_form.processing.data == 'neural_network': # обработка ИИ
-                flash('Обработка ИИ')
-            #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
-                photo = cartoonize_using_network_without_filters(file_in_ndarray)
-                photo = Image.open(photo)
-            #даем случайное имя файлу, чтобы отправить его пользователю
-                random_name = str(randint(0, 10000))+'.jpeg'
-                RANDOM_NAME = random_name
-            #сохраняем файл
-                photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
-            return redirect(url_for('photo_processing'))
+                    if file_form.processing.data == 'cartoon_filter': # обработка фильтрами
+                        flash('Обработка фильтрами')
+                        try:
+                            photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
+                            photo = Image.open(photo)
+                        #даем случайное имя файлу, чтобы отправить его пользовате    
+                            random_name = str(randint(0, 10000))+'.jpeg'
+                            global RANDOM_NAME
+                            RANDOM_NAME = random_name
+                        #скачиваем фотo
+                            photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
+                        
+                        except TypeError:
+                            # Если невозможно обработать фото, то пользователь видит
+                            flash('это фото невозможно обработать, выберите другое')
+                            return redirect(url_for('index'))
+                        return redirect(url_for('photo_processing'))
+                    
+                    elif file_form.processing.data == 'neural_network': # обработка ИИ
+                        flash('Обработка ИИ')
+                    #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
+                        photo = cartoonize_using_network_without_filters(file_in_ndarray)
+                        photo = Image.open(photo)
+                    #даем случайное имя файлу, чтобы отправить его пользователю
+                        random_name = str(randint(0, 10000))+'.jpeg'
+                        RANDOM_NAME = random_name
+                    #сохраняем файл
+                        photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
+                    return redirect(url_for('photo_processing'))
           
         name_photo_example = ['liuyifei4.jpg', 'mountain4.jpg', 'photo1_cartoon.jpg',
                               'photo2_cartoon.jpg']
