@@ -76,7 +76,7 @@ def create_app():
                     RANDOM_NAME = random_name
                 #скачиваем фотo
                     photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
-
+                  
                 except TypeError:
                     # Если невозможно обработать фото, то пользователь видит
                     flash('это фото невозможно обработать, выберите другое')
@@ -114,7 +114,6 @@ def create_app():
     @app.route('/process-login', methods=['POST'])
     def process_login():
         form = LoginForm()
-        
         if form.validate_on_submit():
             user = User.query.filter(User.username == form.username.data).first()
             if user and user.check_password(form.password.data):
@@ -129,7 +128,6 @@ def create_app():
     def logout():
             logout_user()
             return redirect(url_for('index'))
-    
 
     @app.route('/photo')
     def photo_processing():
@@ -144,7 +142,6 @@ def create_app():
         form = RegistrationForm()
         title = 'Регистрация'
         return render_template('registration.html', title=title, form=form)
-
 
     @app.route('/process-reg', methods=['POST'])
     def process_reg():
