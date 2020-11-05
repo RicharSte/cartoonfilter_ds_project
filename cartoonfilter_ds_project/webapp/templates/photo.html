@@ -34,7 +34,7 @@
     <!-- Карусель -->   
     <div class="col-4">
       <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-          <div class="carousel-inner" style=" width:60%; height: 200px !important;">
+          <div class="carousel-inner" style=" width:100%; height: 100% !important;">
               <div class="carousel-item active">
                   <img class="d-block w-100"  src={{ path_photo }} alt="1">
               </div>
@@ -53,8 +53,7 @@
     </div>
     <div class="col-4">
       <!-- Просмотр и скачивание фото -->
-      <input class="btn btn-primary" type=button onclick=location.href="{{ path_photo }}" 
-                name="openFile" value="Посмотреть обработанное фото">
       <a href={{ path_photo }} download="">Скачать фото</a>
+      </input>
     </div>
 {% endblock %}

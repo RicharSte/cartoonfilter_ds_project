@@ -8,10 +8,9 @@ from PIL import Image
 from skimage import io as stikIO
 from werkzeug.utils import secure_filename 
 
-
 from filters import cartoonise_using_cartoonfilter
 from filters import cartoonize_using_network_without_filters
-from webapp.forms import FileForm, LoginForm
+from webapp.forms import FileForm, LoginForm, RegistrationForm
 from webapp.model import db, User
 
 PATH_TO_DOWNLOADS = os.path.join(

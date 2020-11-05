@@ -1,4 +1,4 @@
-BOT_TOKEN = " Write here your Bot token"
+BOT_TOKEN = "Write here your Bot token"
 PROXY = {
     'proxy_url': ' Proxy url',
     'urllib3_proxy_kwargs': {
