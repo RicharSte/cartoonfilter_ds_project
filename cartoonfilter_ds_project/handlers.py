@@ -54,10 +54,13 @@ def cartoonify(update, context):
         #get url
         url = photo['file_path']
         image = stikIO.imread(url)
-        user_cartoonize_image = cf(image)
-        #send the image
-        update.message.reply_text('Here we go')
-        context.bot.send_photo(chat_id=chat_id, photo=user_cartoonize_image)
+        try:
+            user_cartoonize_image = cf(image)
+            #send the image
+            update.message.reply_text('Here we go')
+            context.bot.send_photo(chat_id=chat_id, photo=user_cartoonize_image)
+        except TypeError:
+            update.message.reply_text('Извините, я не могу обработать это фото')
     elif context.user_data['filter_type'] == 'Neural network without filters':
         update.message.reply_text('Please, wait a second')
         #get url
