@@ -69,6 +69,7 @@ def create_app():
                         try:
                             photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
                             photo = Image.open(photo)
+
                             #даем случайное имя файлу, чтобы отправить его пользовате    
                             random_name = str(randint(0, 10000))+'.jpeg'
                             global RANDOM_NAME
@@ -84,6 +85,7 @@ def create_app():
                     
                     elif file_form.processing.data == 'neural_network': # обработка ИИ
                         flash('Обработка ИИ')
+
                         #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
                         photo = cartoonize_using_network_without_filters(file_in_ndarray)
                         photo = Image.open(photo)
