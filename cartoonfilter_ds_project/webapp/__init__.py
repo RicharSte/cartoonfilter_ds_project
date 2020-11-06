@@ -69,11 +69,11 @@ def create_app():
                         try:
                             photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
                             photo = Image.open(photo)
-                        #даем случайное имя файлу, чтобы отправить его пользовате    
+                            #даем случайное имя файлу, чтобы отправить его пользовате    
                             random_name = str(randint(0, 10000))+'.jpeg'
                             global RANDOM_NAME
                             RANDOM_NAME = random_name
-                        #скачиваем фотo
+                            #скачиваем фотo
                             photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
                         
                         except TypeError:
@@ -84,16 +84,16 @@ def create_app():
                     
                     elif file_form.processing.data == 'neural_network': # обработка ИИ
                         flash('Обработка ИИ')
-                    #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
+                        #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
                         photo = cartoonize_using_network_without_filters(file_in_ndarray)
                         photo = Image.open(photo)
-                    #даем случайное имя файлу, чтобы отправить его пользователю
+                        #даем случайное имя файлу, чтобы отправить его пользователю
                         random_name = str(randint(0, 10000))+'.jpeg'
                         RANDOM_NAME = random_name
-                    #сохраняем файл
+                        #сохраняем файл
                         photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
                     return redirect(url_for('photo_processing'))
-          
+        # Список фото для карусели
         name_photo_example = ['liuyifei4.jpg', 'mountain4.jpg', 'photo1_cartoon.jpg',
                               'photo2_cartoon.jpg']
         path_photo_example = [os.path.join('static', 'images', name) for name in name_photo_example]
