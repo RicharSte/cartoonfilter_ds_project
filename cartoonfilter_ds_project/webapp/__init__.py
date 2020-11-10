@@ -1,17 +1,13 @@
-import os
-from random import randint
+import os 
 
 from flask import Flask, request, render_template, flash, redirect, url_for 
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from flask_migrate import Migrate
-from PIL import Image
 from skimage import io as stikIO
-from werkzeug.utils import secure_filename 
 
-from filters import cartoonise_using_cartoonfilter
-from filters import cartoonize_using_network_without_filters
 from webapp.forms import FileForm, LoginForm, RegistrationForm
 from webapp.model import db, User
+from webapp.utilits import security_checking, cartoonf_photo_save, neurof_photo_save
 
 PATH_TO_DOWNLOADS = os.path.join(
 os.path.abspath(os.path.dirname(__file__)), 'static', 'images', 'downloads')
@@ -42,59 +38,22 @@ def create_app():
     def index():
         title = "Обработчик фотографий"
         file_form = FileForm()
-
-        if request.method == 'POST':
-            # Проверка есть ли файл в запросе
-            if 'photo' not in request.files:
-                flash('Нет файла')
-                return redirect(request.url)
-            file = request.files['photo']
-            # Если пользователь не выбирает файл, 
-            # браузер может отправить пустую часть без имени файла
-            if file.filename == '':
-                flash("Файл не выбран")
-                return redirect(request.url)
-            # Если расширение файла в списке разрешенных
-            if file and allowed_file(file.filename):
-                # проверка безопасности имени файла
-                filename = secure_filename(file.filename)
-
+        
+        if security_checking():
+            file = security_checking()
+            if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
+            #считываем картинку сразу конвентируя информацию в ndarray
+                file_in_ndarray = stikIO.imread(file)
+                global RANDOM_NAME
+                if file_form.processing.data == 'cartoon_filter': # обработка фильтрамi
+                    flash('Обработка Фильтрами')
+                    RANDOM_NAME = cartoonf_photo_save(file_in_ndarray, PATH_TO_DOWNLOADS)     
+                
+                elif file_form.processing.data == 'neural_network': # обработка ИИ
+                    flash('Обработка ИИ')
+                    RANDOM_NAME = neurof_photo_save(file_in_ndarray, PATH_TO_DOWNLOADS)
                     
-                if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
-                #считываем картинку сразу конвентируя информацию в ndarray
-                    file_in_ndarray = stikIO.imread(file)
-
-                    if file_form.processing.data == 'cartoon_filter': # обработка фильтрами
-                        flash('Обработка фильтрами')
-                        try:
-                            photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
-                            photo = Image.open(photo)
-
-                            #даем случайное имя файлу, чтобы отправить его пользовате    
-                            random_name = str(randint(0, 10000))+'.jpeg'
-                            global RANDOM_NAME
-                            RANDOM_NAME = random_name
-                            #скачиваем фотo
-                            photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
-                        
-                        except TypeError:
-                            # Если невозможно обработать фото, то пользователь видит
-                            flash('это фото невозможно обработать, выберите другое')
-                            return redirect(url_for('index'))
-                        return redirect(url_for('photo_processing'))
-                    
-                    elif file_form.processing.data == 'neural_network': # обработка ИИ
-                        flash('Обработка ИИ')
-
-                        #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
-                        photo = cartoonize_using_network_without_filters(file_in_ndarray)
-                        photo = Image.open(photo)
-                        #даем случайное имя файлу, чтобы отправить его пользователю
-                        random_name = str(randint(0, 10000))+'.jpeg'
-                        RANDOM_NAME = random_name
-                        #сохраняем файл
-                        photo.save(os.path.join(PATH_TO_DOWNLOADS, RANDOM_NAME))         
-                    return redirect(url_for('photo_processing'))
+                return redirect(url_for('photo_processing'))                           
         # Список фото для карусели
         name_photo_example = ['liuyifei4.jpg', 'mountain4.jpg', 'photo1_cartoon.jpg',
                               'photo2_cartoon.jpg']
