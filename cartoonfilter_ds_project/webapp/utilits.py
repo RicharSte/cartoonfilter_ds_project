@@ -7,6 +7,7 @@ from PIL import Image
 
 from filters import cartoonise_using_cartoonfilter 
 from neuro_filters import cartoonize_using_network_without_filters
+from webapp.config import PATH_TO_DOWNLOADS
 
 def allowed_file(filename):
         # Проверяет есть ли  расширение файла в списке разрешенных расширений
@@ -28,32 +29,29 @@ def security_checking():
         if file and allowed_file(file.filename):
             # проверка безопасности имени файла
             filename = secure_filename(file.filename)
-            
-        return file
+            return file
+        flash("Я не могу принять этот файл")
+        return redirect(request.url)
 
-def cartoonf_photo_save(file_in_ndarray, PATH_TO_DOWNLOADS):
+def photo_saver(photo):
+    photo = Image.open(photo)
+    #даем случайное имя файлу, чтобы отправить его пользовате    
+    random_name = str(randint(0, 10000))+'.jpeg'
+    #скачиваем фотo
+    photo.save(os.path.join(PATH_TO_DOWNLOADS, random_name))
+    return random_name 
+
+def cartoonf_photo(file_in_ndarray):
     try:
         photo = cartoonise_using_cartoonfilter(file_in_ndarray) 
-        photo = Image.open(photo)
-
-        #даем случайное имя файлу, чтобы отправить его пользовате    
-        random_name = str(randint(0, 10000))+'.jpeg'
-        #скачиваем фотo
-        photo.save(os.path.join(PATH_TO_DOWNLOADS, random_name))
-        return random_name         
-    
+        return photo         
     except TypeError:
         # Если невозможно обработать фото, то пользователь видит
         flash('это фото невозможно обработать, выберите другое')
         return redirect(url_for('index'))
     return redirect(url_for('photo_processing'))
 
-def neurof_photo_save(file_in_ndarray, PATH_TO_DOWNLOADS):
+def neurof_photo(file_in_ndarray):
     #обрабатываем фото, на выходе данные находятся в формате _io.BytesIO
     photo = cartoonize_using_network_without_filters(file_in_ndarray)
-    photo = Image.open(photo)
-    #даем случайное имя файлу, чтобы отправить его пользователю
-    random_name = str(randint(0, 10000))+'.jpeg'
-    #сохраняем файл
-    photo.save(os.path.join(PATH_TO_DOWNLOADS, random_name))
-    return random_name
+    return photo

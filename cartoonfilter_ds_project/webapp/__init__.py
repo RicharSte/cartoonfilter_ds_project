@@ -5,14 +5,13 @@ from flask_login import LoginManager, current_user, login_required, login_user, 
 from flask_migrate import Migrate
 from skimage import io as stikIO
 
+from webapp.config import PATH_TO_DOWNLOADS
 from webapp.forms import FileForm, LoginForm, RegistrationForm
 from webapp.model import db, User
-from webapp.utilits import security_checking, cartoonf_photo_save, neurof_photo_save
+from webapp.utilits import security_checking, cartoonf_photo, neurof_photo, photo_saver
 
-PATH_TO_DOWNLOADS = os.path.join(
-os.path.abspath(os.path.dirname(__file__)), 'static', 'images', 'downloads')
 
-RANDOM_NAME = ''
+Random_name = ''
 
 def create_app():
     app = Flask(__name__)
@@ -44,14 +43,16 @@ def create_app():
             if file_form.validate_on_submit(): # если не возникло ошибок при заполнении формы
             #считываем картинку сразу конвентируя информацию в ndarray
                 file_in_ndarray = stikIO.imread(file)
-                global RANDOM_NAME
+                global Random_name
                 if file_form.processing.data == 'cartoon_filter': # обработка фильтрамi
                     flash('Обработка Фильтрами')
-                    RANDOM_NAME = cartoonf_photo_save(file_in_ndarray, PATH_TO_DOWNLOADS)     
+                    photo = cartoonf_photo(file_in_ndarray)
+                    Random_name = photo_saver(photo)     
                 
                 elif file_form.processing.data == 'neural_network': # обработка ИИ
                     flash('Обработка ИИ')
-                    RANDOM_NAME = neurof_photo_save(file_in_ndarray, PATH_TO_DOWNLOADS)
+                    photo = neurof_photo(file_in_ndarray)
+                    Random_name = photo_saver(photo)  
                     
                 return redirect(url_for('photo_processing'))                           
         # Список фото для карусели
@@ -92,7 +93,7 @@ def create_app():
     @app.route('/photo')
     def photo_processing():
         title = "Вот такое фото получилось"
-        path_photo = os.path.join('static', 'images', 'downloads', RANDOM_NAME)
+        path_photo = os.path.join('static', 'images', 'downloads', Random_name)
         return render_template('photo.html', title=title, path_photo=path_photo)
 
     @app.route('/register')
