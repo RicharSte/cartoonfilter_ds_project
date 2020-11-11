@@ -2,8 +2,10 @@ from datetime import timedelta
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+PATH_TO_DOWNLOADS = os.path.join(
+os.path.abspath(os.path.dirname(__file__)), 'static', 'images', 'downloads')
 
-SECRET_KEY = 'Your secret key'
+SECRET_KEY = ''
 ALLOWED_EXTENSIONS = {'jpg'}
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, '..', 'webapp.db')
 
