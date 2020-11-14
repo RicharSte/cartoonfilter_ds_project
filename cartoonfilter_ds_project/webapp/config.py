@@ -1,6 +1,9 @@
 from datetime import timedelta
 import os
 
+AWS_ACCESS_KEY = ''
+AWS_SECRET_KEY = ''
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 PATH_TO_DOWNLOADS = os.path.join(
 os.path.abspath(os.path.dirname(__file__)), 'static', 'images', 'downloads')
