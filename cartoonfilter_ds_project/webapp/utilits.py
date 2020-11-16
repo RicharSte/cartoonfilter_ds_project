@@ -20,6 +20,7 @@ def security_checking():
             flash('Нет файла')
             return redirect(request.url)
         file = request.files['photo']
+        print(file, 1)
         # Если пользователь не выбирает файл, 
         # браузер может отправить пустую часть без имени файла
         if file.filename == '':
