@@ -8,8 +8,11 @@ from skimage import io as stikIO
 from webapp.config import PATH_TO_DOWNLOADS
 from webapp.forms import FileForm, LoginForm, RegistrationForm
 from webapp.model import db, User
-from webapp.utilits import security_checking, cartoonf_photo, photo_saver
 
+from webapp.s3_photo_upload import download_photo_s3
+from webapp.utilits import security_checking, cartoonf_photo, neurof_photo, photo_saver
+
+import numpy
 
 Random_name = ''
 
@@ -48,10 +51,15 @@ def create_app():
                 global Random_name
                 if file_form.processing.data == 'cartoon_filter': # обработка фильтрамi
                     photo = cartoonf_photo(file_in_ndarray)
-                
+                    Random_name = photo_saver(photo)     
+                    User_id = str(current_user)[1:-1]
+                    download_photo_s3(file_in_ndarray, User_id, Random_name)
+
                 elif file_form.processing.data == 'neural_network': # обработка ИИ
                     photo = neurof_photo(file_in_ndarray)
-                Random_name = photo_saver(photo)  
+                    Random_name = photo_saver(photo)  
+                    User_id = str(current_user)[1:-1]
+                    download_photo_s3(file_in_ndarray, User_id, Random_name)
                     
                 return redirect(url_for('photo_processing'))                           
         # Список фото для карусели
