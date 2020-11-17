@@ -42,3 +42,4 @@ class RegistrationForm(FlaskForm):
         EqualTo('password')], 
         render_kw={'class': "form-control"})
     submit = SubmitField('Отправить', render_kw={'class': "btn btn-primary"})
+    

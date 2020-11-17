@@ -8,6 +8,7 @@ from skimage import io as stikIO
 from webapp.config import PATH_TO_DOWNLOADS
 from webapp.forms import FileForm, LoginForm, RegistrationForm
 from webapp.model import db, User
+
 from webapp.s3_photo_upload import download_photo_s3
 from webapp.utilits import security_checking, cartoonf_photo, neurof_photo, photo_saver
 
@@ -37,6 +38,8 @@ def create_app():
 
     @app.route('/', methods=['GET', 'POST'])
     def index():
+        if not current_user.is_authenticated:
+            return redirect(url_for('greeting'))
         title = "Обработчик фотографий"
         file_form = FileForm()
         
@@ -47,13 +50,12 @@ def create_app():
                 file_in_ndarray = stikIO.imread(file)
                 global Random_name
                 if file_form.processing.data == 'cartoon_filter': # обработка фильтрамi
-                    flash('Обработка Фильтрами')
                     photo = cartoonf_photo(file_in_ndarray)
                     Random_name = photo_saver(photo)     
                     User_id = str(current_user)[1:-1]
                     download_photo_s3(file_in_ndarray, User_id, Random_name)
+
                 elif file_form.processing.data == 'neural_network': # обработка ИИ
-                    flash('Обработка ИИ')
                     photo = neurof_photo(file_in_ndarray)
                     Random_name = photo_saver(photo)  
                     User_id = str(current_user)[1:-1]
@@ -68,6 +70,16 @@ def create_app():
                                 path_photo_example=path_photo_example)
     
 
+    
+    @app.route('/greeting')
+    def greeting():
+        if current_user.is_authenticated:
+            return redirect(url_for('index'))
+        title = 'Приветствую!'
+
+        return render_template('greeting.html', title=title)
+    
+    
     @app.route('/login')
     def login():
         if current_user.is_authenticated:
