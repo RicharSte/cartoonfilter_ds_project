@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  
+  <h1>
+    <p class="text-center">{{ title }}</p>
+  </h1>
+  <h6>
+    <p class="text-center">Для того чтобы обработать фотографию на нашем сайте, пожалуйста, авторизуйтесь.</p>
+  </h6>
+
+  <div class="row">
+      <div class="col-4"> 
+      </div>
+      <div class="col-2">
+          {% with messages = get_flashed_messages() %}
+              {% if messages %}
+              <div class="alert alert-warning" role="alert">
+                  {% for message in messages %}
+                      {{ message }}<br>
+                  {% endfor %}
+              </div>
+              {% endif %}
+          {% endwith %}
+
+          <form method="LINK" action='{{ url_for("login") }}'>
+            <input type="submit" class="btn btn-outline-primary" value="Войти">
+          </form>
+          
+
+      </div>
+      <div class="col-1"> 
+        <form method="LINK" action='{{ url_for("register") }}'>
+            <input type="submit" class="btn btn-outline-primary" value="Зарегистрироваться">
+        </form>
+      </div>
+  </div>
+{% endblock %}
