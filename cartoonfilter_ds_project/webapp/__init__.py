@@ -5,7 +5,7 @@ from flask_login import LoginManager, current_user, login_required, login_user, 
 from flask_migrate import Migrate
 from skimage import io as stikIO
 
-from webapp.config import PATH_TO_DOWNLOADS, name_photo_example
+from webapp.config import PATH_TO_DOWNLOADS, PHOTO_PATH, name_photo_example
 from webapp.forms import FileForm, LoginForm, RegistrationForm
 from webapp.model import db, User
 
@@ -48,8 +48,8 @@ def create_app():
                 if file_form.processing.data == 'cartoon_filter': # обработка фильтрамi
                     photo = cartoonf_photo(file_in_ndarray)
                     Random_name = photo_saver(photo)     
-                    User_id = str(current_user)[1:-1]
-                    download_photo_s3(file_in_ndarray, User_id, Random_name)
+                    User_id = str(current_user)[1:-1] # берём айди пользователя, чтобы сделать для него папку на амазоне
+                    download_photo_s3(file_in_ndarray, User_id, Random_name) # используем амазон, чтобы сохранить исходник фото
 
                 elif file_form.processing.data == 'neural_network': # обработка ИИ
                     photo = neurof_photo(file_in_ndarray)
@@ -64,7 +64,7 @@ def create_app():
                                 path_photo_example=path_photo_example)
     
 
-    
+    #главная страница
     @app.route('/greeting')
     def greeting():
         if current_user.is_authenticated:
@@ -73,7 +73,7 @@ def create_app():
 
         return render_template('greeting.html', title=title)
     
-    
+    # функция авторизации
     @app.route('/login')
     def login():
         if current_user.is_authenticated:
@@ -82,7 +82,7 @@ def create_app():
         login_form = LoginForm()
         return render_template('login.html', title=title, form=login_form)
 
-
+    #
     @app.route('/process-login', methods=['POST'])
     def process_login():
         form = LoginForm()
@@ -104,7 +104,7 @@ def create_app():
     @app.route('/photo')
     def photo_processing():
         title = "Вот такое фото получилось"
-        path_photo = os.path.join('static', 'images', 'downloads', Random_name)
+        path_photo = os.path.join(PHOTO_PATH, Random_name)
         return render_template('photo.html', title=title, path_photo=path_photo)
 
     @app.route('/register')

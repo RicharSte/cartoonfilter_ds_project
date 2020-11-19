@@ -19,3 +19,5 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 #список фотографий для каруселм
 name_photo_example = ['liuyifei4.jpg', 'mountain4.jpg', 'photo1_cartoon.jpg',
                               'photo2_cartoon.jpg']
+
+PHOTO_PATH = os.path.join('static', 'images', 'downloads')
