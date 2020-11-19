@@ -5,7 +5,7 @@ from flask_login import LoginManager, current_user, login_required, login_user, 
 from flask_migrate import Migrate
 from skimage import io as stikIO
 
-from webapp.config import PATH_TO_DOWNLOADS
+from webapp.config import PATH_TO_DOWNLOADS, name_photo_example
 from webapp.forms import FileForm, LoginForm, RegistrationForm
 from webapp.model import db, User
 
@@ -30,10 +30,6 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(user_id)
-
-    def allowed_file(filename):
-        # Проверяет есть ли  расширение файла в списке разрешенных расширений
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg'}
     
 
     @app.route('/', methods=['GET', 'POST'])
@@ -62,9 +58,7 @@ def create_app():
                     download_photo_s3(file_in_ndarray, User_id, Random_name)
                     
                 return redirect(url_for('photo_processing'))                           
-        # Список фото для карусели
-        name_photo_example = ['liuyifei4.jpg', 'mountain4.jpg', 'photo1_cartoon.jpg',
-                              'photo2_cartoon.jpg']
+
         path_photo_example = [os.path.join('static', 'images', name) for name in name_photo_example]
         return render_template('index.html', title=title, form=file_form, 
                                 path_photo_example=path_photo_example)
