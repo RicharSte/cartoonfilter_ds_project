@@ -19,4 +19,3 @@ class User(db.Model, UserMixin):
     
     def __repe__(self):
         return '<User {}, id = {}>'.format(self.username, self.id)
-    
