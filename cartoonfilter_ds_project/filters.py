@@ -1,4 +1,3 @@
-#тут хранятся все фильтры
 from cartoon_filter import apply_cartoon_filter
 import io
 from PIL import Image

@@ -1,4 +1,4 @@
-from webapp.config import AWS_ACCESS_KEY, AWS_SECRET_KEY
+from webapp.config import AWS_ACCESS_KEY, AWS_SECRET_KEY, NAME_BUCKET 
 from PIL import Image
 import boto3
 import io
@@ -18,6 +18,6 @@ def download_photo_s3(file, username, photo_number):
     file = io.BytesIO(image_in_bytes_format)
     
     
-    upload_file_bucket = 'users-photo-1'
-    upload_file_key = username + '/' + photo_number
+    upload_file_bucket = NAME_BUCKET
+    upload_file_key = os.path.join(username, photo_number)
     client.upload_fileobj(file, upload_file_bucket, upload_file_key)
